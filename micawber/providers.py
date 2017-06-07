@@ -25,6 +25,192 @@ from micawber.exceptions import ProviderException
 from micawber.exceptions import ProviderNotFoundException
 
 
+# a dict of dicts.
+# the keys are an API endpoint
+# the values are a dict of matching regular expression patterns ('re')
+# and domains the endpoint serves ('d')
+providers_library = {
+    # b
+    'http://blip.tv/oembed': {
+        're': ['http://blip.tv/\S+', ],
+        'd': ['blip.tv', ]
+    },
+
+    # c
+    'http://chirb.it/oembed.json': {
+        're': ['http://chirb.it/\S+', ],
+        'd': ['chirb.it', ],
+    },
+    'https://www.circuitlab.com/circuit/oembed': {
+        're': ['https://www.circuitlab.com/circuit/\S+', ],
+        'd': ['circuitlab.com', ],
+    },
+    'http://www.collegehumor.com/oembed.json': {
+        're': ['http://www.collegehumor.com/video/\S+', ],
+        'd': ['collegehumor.com', ],
+    },
+
+    # d
+    'http://www.dailymotion.com/services/oembed': {
+        're': ['https?://(www\.)?dailymotion\.com/\S+', ],
+        'd': ['dailymotion.com', ],
+    },
+
+    # f
+    'https://www.flickr.com/services/oembed/': {
+        're': ['https?://\S*?flickr.com/\S+',
+               'https?://flic\.kr/\S*',
+               ],
+        'd': ['flickr.com',
+              'flic.kr',
+              ],
+    },
+    'http://www.funnyordie.com/oembed': {
+        're': ['https?://(www\.)?funnyordie\.com/videos/\S+', ],
+        'd': ['funnyordie.com', ],
+    },
+
+    # g
+    'https://github.com/api/oembed': {
+        're': [r'https?://gist.github.com/\S*', ],
+        'd': ['gist.github.com', ],
+    },
+
+    # h
+    'http://www.hulu.com/api/oembed.json': {
+        're': ['http://www.hulu.com/watch/\S+', ],
+        'd': ['hulu.com', ],
+    },
+
+    # i
+    'http://www.ifixit.com/Embed': {
+        're': ['http://www.ifixit.com/Guide/View/\S+', ],
+        'd': ['ifixit.com', ],
+    },
+    'http://api.imgur.com/oembed': {
+        're': ['http://\S*imgur\.com/\S+', ],
+        'd': ['imgur.com', ],
+    },
+    'http://api.instagram.com/oembed': {
+        're': ['https?://(www\.)?instagr(\.am|am\.com)/p/\S+', ],
+        'd': ['instagr.am',
+              'instagram.com',
+              ],
+    },
+
+    # j
+    'http://www.jest.com/oembed.json': {
+        're': ['http://www.jest.com/(video|embed)/\S+', ],
+        'd': ['jest.com', ],
+    },
+
+    # m
+    'http://api.mobypicture.com/oEmbed': {
+        're': ['http://www.mobypicture.com/user/\S*?/view/\S*',
+               'http://moby.to/\S*',
+               ],
+        'd': ['mobypicture.com',
+              'moby.to',
+              ],
+    },
+
+    # p
+    'http://photobucket.com/oembed': {
+        're': ['http://i\S*.photobucket.com/albums/\S+',
+               'http://gi\S*.photobucket.com/groups/\S+',
+               ],
+        'd': ['photobucket.com', ],
+    },
+    'http://www.polleverywhere.com/services/oembed/': {
+        're': ['http://www.polleverywhere.com/(polls|multiple_choice_polls|free_text_polls)/\S+', ],
+        'd': ['polleverywhere.com', ],
+    },
+    'http://polldaddy.com/oembed/': {
+        're': ['https?://(.+\.)?polldaddy\.com/\S*', ],
+        'd': ['polldaddy.com', ],
+    },
+
+    # q
+    'http://qik.com/api/oembed.json': {
+        're': ['http://qik.com/video/\S+', ],
+        'd': ['qik.com', ],
+    },
+
+    # r
+    'http://revision3.com/api/oembed/': {
+        're': ['http://\S*.revision3.com/\S+', ],
+        'd': ['revision3.com', ],
+    },
+
+    # s
+    'http://www.slideshare.net/api/oembed/2': {
+        're': ['https?://www.slideshare.net/[^\/]+/\S+',
+               'https?://slidesha\.re/\S*',
+               ],
+        'd': ['slideshare.net',
+              'slidesha.re', ]
+    },
+    'http://api.smugmug.com/services/oembed/': {
+        're': ['http://\S*.smugmug.com/\S*', ],
+        'd': ['smugmug.com', ],
+    },
+    'http://soundcloud.com/oembed': {
+        're': ['https://\S*?soundcloud.com/\S+', ],
+        'd': ['soundcloud.com', ],
+    },
+    'https://speakerdeck.com/oembed.json': {
+        're': ['https?://speakerdeck\.com/\S*', ],
+        'd': ['speakerdeck.com', ],
+    },
+    'http://www.scribd.com/services/oembed': {
+        're': ['https?://(www\.)?scribd\.com/\S*', ],
+        'd': ['scribd.com', ],
+    },
+
+    # t
+    'https://api.twitter.com/1/statuses/oembed.json': {
+        're': ['https?://(www\.)?twitter.com/\S+/status(es)?/\S+', ],
+        'd': ['twitter.com', ],
+    },
+
+    # v
+    'http://vimeo.com/api/oembed.json': {
+        're': ['http://vimeo.com/\S+',
+               'https://vimeo.com/\S+',
+               ],
+        'd': ['vimeo.com', ],
+    },
+    'http://lab.viddler.com/services/oembed/': {
+        're': ['http://\S*.viddler.com/\S*', ],
+        'd': ['viddler.com', ],
+    },
+
+    # y
+    'http://www.youtube.com/oembed': {
+        're': ['http://(\S*.)?youtu(\.be/|be\.com/watch)\S+', ],
+        'd': ['youtu.be', 'youtube.com', ],
+    },
+    'http://www.youtube.com/oembed?scheme=https&': {
+        're': ['https://(\S*.)?youtu(\.be/|be\.com/watch)\S+', ],
+        'd': ['youtu.be', 'youtube.com', ],
+    },
+    'http://www.yfrog.com/api/oembed': {
+        're': ['http://(\S*\.)?yfrog\.com/\S*', ],
+        'd': ['yfrog.com', ],
+    },
+
+    # w
+    'http://public-api.wordpress.com/oembed/': {
+        're': ['http://\S+.wordpress.com/\S+', ],
+        'd': ['wordpress.com', ],
+    },
+    'http://wordpress.tv/oembed/': {
+        're': ['https?://wordpress.tv/\S+', ],
+        'd': ['wordpress.tv', ],
+    },
+}
+
+
 class Provider(object):
     def __init__(self, endpoint, timeout=3.0, user_agent=None, **kwargs):
         self.endpoint = endpoint
@@ -149,78 +335,10 @@ class ProviderRegistry(object):
 def bootstrap_basic(cache=None, registry=None):
     # complements of oembed.com#section7
     pr = registry or ProviderRegistry(cache)
-
-    # b
-    pr.register('http://blip.tv/\S+', Provider('http://blip.tv/oembed'))
-
-    # c
-    pr.register('http://chirb.it/\S+', Provider('http://chirb.it/oembed.json'))
-    pr.register('https://www.circuitlab.com/circuit/\S+', Provider('https://www.circuitlab.com/circuit/oembed'))
-    pr.register('http://www.collegehumor.com/video/\S+', Provider('http://www.collegehumor.com/oembed.json'))
-
-    # d
-    pr.register('https?://(www\.)?dailymotion\.com/\S+', Provider('http://www.dailymotion.com/services/oembed'))
-
-    # f
-    pr.register('https?://\S*?flickr.com/\S+', Provider('https://www.flickr.com/services/oembed/'))
-    pr.register('https?://flic\.kr/\S*', Provider('https://www.flickr.com/services/oembed/'))
-    pr.register('https?://(www\.)?funnyordie\.com/videos/\S+', Provider('http://www.funnyordie.com/oembed'))
-
-    # g
-    pr.register(r'https?://gist.github.com/\S*', Provider('https://github.com/api/oembed'))
-
-    # h
-    pr.register('http://www.hulu.com/watch/\S+', Provider('http://www.hulu.com/api/oembed.json'))
-
-    # i
-    pr.register('http://www.ifixit.com/Guide/View/\S+', Provider('http://www.ifixit.com/Embed'))
-    pr.register('http://\S*imgur\.com/\S+', Provider('http://api.imgur.com/oembed')),
-    pr.register('https?://(www\.)?instagr(\.am|am\.com)/p/\S+', Provider('http://api.instagram.com/oembed'))
-
-    # j
-    pr.register('http://www.jest.com/(video|embed)/\S+', Provider('http://www.jest.com/oembed.json'))
-
-    # m
-    pr.register('http://www.mobypicture.com/user/\S*?/view/\S*', Provider('http://api.mobypicture.com/oEmbed'))
-    pr.register('http://moby.to/\S*', Provider('http://api.mobypicture.com/oEmbed'))
-
-    # p
-    pr.register('http://i\S*.photobucket.com/albums/\S+', Provider('http://photobucket.com/oembed'))
-    pr.register('http://gi\S*.photobucket.com/groups/\S+', Provider('http://photobucket.com/oembed'))
-    pr.register('http://www.polleverywhere.com/(polls|multiple_choice_polls|free_text_polls)/\S+', Provider('http://www.polleverywhere.com/services/oembed/'))
-    pr.register('https?://(.+\.)?polldaddy\.com/\S*', Provider('http://polldaddy.com/oembed/'))
-
-    # q
-    pr.register('http://qik.com/video/\S+', Provider('http://qik.com/api/oembed.json'))
-
-    # r
-    pr.register('http://\S*.revision3.com/\S+', Provider('http://revision3.com/api/oembed/'))
-
-    # s
-    pr.register('https?://www.slideshare.net/[^\/]+/\S+', Provider('http://www.slideshare.net/api/oembed/2'))
-    pr.register('https?://slidesha\.re/\S*', Provider('http://www.slideshare.net/api/oembed/2'))
-    pr.register('http://\S*.smugmug.com/\S*', Provider('http://api.smugmug.com/services/oembed/'))
-    pr.register('https://\S*?soundcloud.com/\S+', Provider('http://soundcloud.com/oembed'))
-    pr.register('https?://speakerdeck\.com/\S*', Provider('https://speakerdeck.com/oembed.json')),
-    pr.register('https?://(www\.)?scribd\.com/\S*', Provider('http://www.scribd.com/services/oembed'))
-
-    # t
-    pr.register('https?://(www\.)?twitter.com/\S+/status(es)?/\S+', Provider('https://api.twitter.com/1/statuses/oembed.json'))
-
-    # v
-    pr.register('http://\S*.viddler.com/\S*', Provider('http://lab.viddler.com/services/oembed/'))
-    pr.register('http://vimeo.com/\S+', Provider('http://vimeo.com/api/oembed.json'))
-    pr.register('https://vimeo.com/\S+', Provider('https://vimeo.com/api/oembed.json'))
-
-    # y
-    pr.register('http://(\S*.)?youtu(\.be/|be\.com/watch)\S+', Provider('http://www.youtube.com/oembed'))
-    pr.register('https://(\S*.)?youtu(\.be/|be\.com/watch)\S+', Provider('http://www.youtube.com/oembed?scheme=https&'))
-    pr.register('http://(\S*\.)?yfrog\.com/\S*', Provider('http://www.yfrog.com/api/oembed'))
-
-    # w
-    pr.register('http://\S+.wordpress.com/\S+', Provider('http://public-api.wordpress.com/oembed/'))
-    pr.register('https?://wordpress.tv/\S+', Provider('http://wordpress.tv/oembed/'))
-
+    for _endpoint in providers_library.keys():
+        _provider = Provider(_endpoint)
+        for _regex in providers_library[_endpoint]['re']:
+            pr.register(_regex, _provider)
     return pr
 
 
