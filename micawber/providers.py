@@ -332,6 +332,44 @@ class ProviderRegistry(object):
         raise ProviderNotFoundException('Provider not found for "%s"' % url)
 
 
+class ProviderRegistryDomainbased(ProviderRegistry):
+    # a variation of the ProviderRegistry
+
+    def __init__(self, cache=None):
+        super(ProviderRegistryDomainbased, self).__init__()
+        self._registry_domainbased = {}
+
+    def register(self, regex, provider, domains=None):
+        self._registry[regex] = provider
+        if domains:
+            for domain in domains:
+                if domain not in self._registry_domainbased:
+                    self._registry_domainbased[domain] = {}
+                self._registry_domainbased[domain][regex] = provider
+
+    def unregister(self, regex, domains=None):
+        raise ValueError('NotImplemented')
+
+    def provider_for_url(self, url, domain=None):
+        if domain is not None:
+            if domain in self._registry_domainbased:
+                for regex, provider in self._registry_domainbased[domain].items():
+                    if re.match(regex, url):
+                        return provider
+        else:
+            for regex, provider in self:
+                if re.match(regex, url):
+                    return provider
+
+    @url_cache
+    def request(self, url, **params):
+        domain = params.pop('domain', None)
+        provider = self.provider_for_url(url, domain=domain)
+        if provider:
+            return provider.request(url, **params)
+        raise ProviderNotFoundException('Provider not found for "%s"' % url)
+
+
 def bootstrap_basic(cache=None, registry=None):
     # complements of oembed.com#section7
     pr = registry or ProviderRegistry(cache)
@@ -339,6 +377,16 @@ def bootstrap_basic(cache=None, registry=None):
         _provider = Provider(_endpoint)
         for _regex in providers_library[_endpoint]['re']:
             pr.register(_regex, _provider)
+    return pr
+
+
+def bootstrap_domainbased(cache=None, registry=None):
+    pr = registry or ProviderRegistryDomainbased(cache)
+    for _endpoint in providers_library.keys():
+        _provider = Provider(_endpoint)
+        _domains = providers_library[_endpoint]['d']
+        for _regex in providers_library[_endpoint]['re']:
+            pr.register(_regex, _provider, domains=_domains)
     return pr
 
 
